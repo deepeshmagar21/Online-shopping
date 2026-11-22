@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true"
+    android:layout_margin="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/cart_image"
+            android:layout_width="110dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/food" />
+
+        <LinearLayout
+            android:id="@+id/cart_info_layout"
+            android:layout_toEndOf="@id/cart_image"
+            android:layout_toStartOf="@id/cart_delete"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/cart_food_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/opensans_semibold"
+                android:textSize="16sp"
+                android:textColor="@color/textColor"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="Product Name" />
+
+            <TextView
+                android:id="@+id/cart_shop_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="Shop Name" />
+
+            <TextView
+                android:id="@+id/cart_pieces"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:text="1 Pieces" />
+
+            <TextView
+                android:id="@+id/cart_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:fontFamily="@font/opensans_semibold"
+                android:textSize="16sp"
+                android:text="₩0.00" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/cart_delete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:padding="6dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_delete" />
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
