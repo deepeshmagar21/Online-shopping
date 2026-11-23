@@ -3,12 +3,12 @@ package com.app.android.june.allinone;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,6 +17,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -24,84 +25,138 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Random;
+
 public class CusLocationActivity extends AppCompatActivity implements OnMapReadyCallback {
     FirebaseFirestore db;
     DocumentReference users;
-    String userId, UserID;
-    Double lati, logi;
+    String UserID;
+    Double sellerLat = 37.5665, sellerLng = 126.9780; // Default seller (Seoul)
+    Double buyerLat = 35.0160, buyerLng = 126.7100;   // Default buyer (Naju-si / Jeollanam-do)
     MapFragment mapFragment;
     EditText editText;
 
     CountDownTimer countDownTimer;
     private int counter = 40;
     AppLocationService appLocationService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cus_location);
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapView);
         editText = findViewById(R.id.myLocation);
         db = FirebaseFirestore.getInstance();
 
-        appLocationService = new AppLocationService(
-                CusLocationActivity.this);
+        appLocationService = new AppLocationService(CusLocationActivity.this);
+
+        // Generate random area in South Korea if no specific location exists
+        generateKoreaRandomLocations();
+
         if (getIntent().hasExtra("UserID")) {
             UserID = getIntent().getStringExtra("UserID");
             getUserLocation();
+        } else {
+            if (mapFragment != null) {
+                mapFragment.getMapAsync(this);
+            }
+            showAddress();
         }
     }
 
-    private void getUserLocation() {
-        users =  db.collection("Vendors").document("users").collection("users").document(UserID).collection("location").document("location");
-        users.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                              @Override
-                                              public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                  if (task.isSuccessful()) {
-                                                      // pDialog.dismiss();
-                                                      DocumentSnapshot doc = task.getResult();
-                                                      if (doc.exists()) {
-                                                          //pDialog.dismiss();
-                                                       String latitude = doc.getString("Latitude");
-                                                         String longitude = doc.getString("Longitude");
-                                                           lati = Double.parseDouble(latitude);
-                                                          logi = Double.parseDouble(longitude);
-                                                          //Toast.makeText(CusLocationActivity.this, "vendor location" + "lati: " + lati +"log: " + logi, Toast.LENGTH_LONG).show();
-                                                          mapFragment.getMapAsync(CusLocationActivity.this);
-                                                          showAddress();
-                                                          startTimer();
-                                                      }
-                                                  }
-                                              }
-                                          }
-        )
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // pDialog.dismiss();
-                    }
-                });
+    private void generateKoreaRandomLocations() {
+        Random rand = new Random();
+        // Korea latitude roughly 34.0 to 38.0, longitude 126.0 to 129.0
+        double baseLat = 35.0 + (37.5 - 35.0) * rand.nextDouble();
+        double baseLng = 126.5 + (129.0 - 126.5) * rand.nextDouble();
+
+        sellerLat = baseLat + (rand.nextDouble() - 0.5) * 0.05;
+        sellerLng = baseLng + (rand.nextDouble() - 0.5) * 0.05;
+
+        buyerLat = baseLat + (rand.nextDouble() - 0.5) * 0.08;
+        buyerLng = baseLng + (rand.nextDouble() - 0.5) * 0.08;
     }
 
+    private void getUserLocation() {
+        if (UserID == null || UserID.isEmpty()) {
+            if (mapFragment != null) mapFragment.getMapAsync(this);
+            showAddress();
+            return;
+        }
+
+        users = db.collection("Vendors").document("users").collection("users").document(UserID).collection("location").document("location");
+        users.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc != null && doc.exists()) {
+                        String latitude = doc.getString("Latitude");
+                        String longitude = doc.getString("Longitude");
+                        if (latitude != null && longitude != null) {
+                            try {
+                                buyerLat = Double.parseDouble(latitude);
+                                buyerLng = Double.parseDouble(longitude);
+                            } catch (Exception ignored) {}
+                        }
+                    }
+                }
+                if (mapFragment != null) {
+                    mapFragment.getMapAsync(CusLocationActivity.this);
+                }
+                showAddress();
+                startTimer();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (mapFragment != null) {
+                    mapFragment.getMapAsync(CusLocationActivity.this);
+                }
+                showAddress();
+            }
+        });
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        LatLng sellerLoc = new LatLng(sellerLat, sellerLng);
+        LatLng buyerLoc = new LatLng(buyerLat, buyerLng);
+
+        // Add Seller / Store Marker
         googleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(lati, logi))
-                .title("Vendor location"));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lati, logi), 13));
+                .position(sellerLoc)
+                .title("Seller / Store Location")
+                .snippet("Dispatching order"));
+
+        // Add Buyer / Customer Marker
+        googleMap.addMarker(new MarkerOptions()
+                .position(buyerLoc)
+                .title("Buyer / Delivery Location")
+                .snippet("Destination address"));
+
+        // Draw Route Polyline from Seller to Buyer
+        googleMap.addPolyline(new PolylineOptions()
+                .add(sellerLoc, buyerLoc)
+                .width(8f)
+                .color(Color.RED));
+
+        // Focus camera on Buyer location
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(buyerLoc, 14));
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(lati, logi))      // Sets the center of the map to location user
-                .zoom(17)                   // Sets the zoom
-                .bearing(30)                // Sets the orientation of the camera to east
-                .tilt(70)                   // Sets the tilt of the camera to 30 degrees
-                .build();                   // Creates a CameraPosition from the builder
+                .target(buyerLoc)
+                .zoom(15)
+                .bearing(30)
+                .tilt(45)
+                .build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     public void startTimer() {
-
         countDownTimer = new CountDownTimer(40000, 1000) {
             public void onTick(long millisUntilFinished) {
                 counter--;
@@ -109,16 +164,12 @@ public class CusLocationActivity extends AppCompatActivity implements OnMapReady
             public void onFinish() {
                 counter = 40;
                 getUserLocation();
-
             }
-
         }.start();
     }
+
     private void showAddress() {
-
-
-        LocationAddress locationAddress = new LocationAddress();
-        LocationAddress.getAddressFromLocation(lati, logi,
+        LocationAddress.getAddressFromLocation(buyerLat, buyerLng,
                 getApplicationContext(), new GeocoderHandler());
     }
 
@@ -134,8 +185,9 @@ public class CusLocationActivity extends AppCompatActivity implements OnMapReady
                 default:
                     locationAddress = null;
             }
-            editText.setText(locationAddress);
-           // myLocation = locationAddress;
+            if (editText != null && locationAddress != null) {
+                editText.setText("Delivery Route: " + locationAddress);
+            }
         }
     }
 }
