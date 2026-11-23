@@ -194,6 +194,11 @@ public class orderAdapter extends
                                                 public void onClick(DialogInterface dialog, int id) {
                                                     Intent intent = new Intent(view.getContext(), CusLocationActivity.class);
                                                     intent.putExtra("UserID", userID);
+                                                    Orders ord = eventsList.get(pos);
+                                                    if (ord.getLatitude() != null && ord.getLongitude() != null) {
+                                                        intent.putExtra("latitude", ord.getLatitude());
+                                                        intent.putExtra("longitude", ord.getLongitude());
+                                                    }
                                                     view.getContext().startActivity(intent);
                                                     dialog.cancel();
                                                 }

@@ -26,6 +26,8 @@ public class Orders {
     private String UserPhone;
     private String UserEmail;
     private String UserPhoto;
+    private Double Latitude;
+    private Double Longitude;
     private String Id;
 
     public Orders(){
@@ -33,7 +35,7 @@ public class Orders {
     }
 
     public Orders(String foodName, long date, String shopName, Double likes, String foodPhoto, String foodDesc, String foodId, Integer totalPrice, Integer foodPieces, String foodTags, String shopId, String paymentMethod, Integer status, String time, String userId, String homeAddress, String orderId,
-                  String userName, String userPhone, String userEmail, String userPhoto, String id) {
+                  String userName, String userPhone, String userEmail, String userPhoto, Double latitude, Double longitude, String id) {
         FoodName = foodName;
         Date = date;
         ShopName = shopName;
@@ -55,10 +57,12 @@ public class Orders {
         UserPhone = userPhone;
         UserEmail = userEmail;
         UserPhoto = userPhoto;
+        Latitude = latitude;
+        Longitude = longitude;
         Id = id;
     }
 
-    
+
 
     public String getFoodName() {
         return FoodName;
@@ -228,6 +232,22 @@ public class Orders {
         UserPhoto = userPhoto;
     }
 
+    public Double getLatitude() {
+        return Latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        Latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return Longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        Longitude = longitude;
+    }
+
     public String getId() {
         return Id;
     }
@@ -235,8 +255,4 @@ public class Orders {
     public void setId(String id) {
         Id = id;
     }
-
-    
-    
- 
 }
