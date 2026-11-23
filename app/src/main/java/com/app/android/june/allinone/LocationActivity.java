@@ -317,18 +317,22 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()))
-                .title("My location"));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), 13));
+        if (mCurrentLocation != null) {
+            googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()))
+                    .title("Delivery Location"));
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()), 13));
+        }
 
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()))      // Sets the center of the map to location user
-                .zoom(17)                   // Sets the zoom
-                .bearing(30)                // Sets the orientation of the camera to east
-                .tilt(70)                   // Sets the tilt of the camera to 30 degrees
-                .build();                   // Creates a CameraPosition from the builder
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        googleMap.setOnCameraIdleListener(() -> {
+            LatLng center = googleMap.getCameraPosition().target;
+            if (mCurrentLocation == null) {
+                mCurrentLocation = new Location("map");
+            }
+            mCurrentLocation.setLatitude(center.latitude);
+            mCurrentLocation.setLongitude(center.longitude);
+            showAddress();
+        });
     }
 
     private void showAddress() {
