@@ -1,7 +1,7 @@
 # Requirements Traceability Matrix (RTM)
 
 ## Project Name
-**All in One – Online Shopping & Multi-Vendor Delivery Ecosystem**
+**All in One – Online Shopping 
 
 ## 1. Introduction
 
