@@ -1,25 +1,45 @@
-# Requirement Analysis & Feasibility Study
-## Project: All in One (Online Shopping & Multi-Vendor Delivery Ecosystem)
+# Requirement Analysis 
+
+## Project: All in One – Online Shopping 
 
 ---
 
 ## 1. Problem Statement
-Consumers and local merchants face fragmentation in local commerce: customers must install separate apps for food, fashion, electronics, and groceries, while small vendors struggle with establishing direct digital ordering and delivery logistics.
+
+Consumers and local merchants face fragmentation in local commerce. Customers must install separate applications for food, fashion, electronics, groceries, and other products. At the same time, small vendors struggle to establish direct digital ordering and delivery services.
+
+The All in One application aims to bring different product categories and multiple vendors together in one platform, making shopping more convenient for customers and providing local vendors with an opportunity to reach more customers.
 
 ---
 
 ## 2. Functional Requirements
-1. **User Authentication:** Secure email/password login, registration, and password recovery via Firebase Auth.
-2. **Multi-Vendor Product Catalog:** Browse items categorized by food, fashion, shoes, cloths, electronics, and beauty.
-3. **Real-Time Search:** Instant filtering of products across active inventory and sample datasets.
-4. **Cart Management:** Add multiple products, view cart items, calculate grand totals, and remove items dynamically.
-5. **Flexible Checkout:** Support for **Pay on Delivery** and secure **Debit/Credit Card** payments.
-6. **Geolocation & Mapping:** Pinpoint delivery addresses on Google Maps and track orders live.
-7. **Delivery Agent Registration:** Profile submission form for delivery personnel.
+
+1. **User Authentication:** Secure email/password login, registration, and password recovery using Firebase Authentication.
+
+2. **Multi-Vendor Product Catalog:** Allow customers to browse products from different vendors, categorized into food, fashion, shoes, clothes, electronics, and beauty products.
+
+3. **Real-Time Search:** Allow users to search and filter products across active inventory and sample datasets.
+
+4. **Cart Management:** Allow customers to add multiple products, view cart items, calculate the grand total, and remove products dynamically.
+
+5. **Flexible Checkout:** Support Pay on Delivery and Debit/Credit Card payment options.
+
+6. **Geolocation & Mapping:** Allow customers to select delivery addresses using Google Maps and support live order tracking.
+
+7. **Delivery Agent Registration:** Provide a profile submission form for delivery personnel.
 
 ---
 
 ## 3. Non-Functional Requirements
-* **Performance:** Cold app launch under 2 seconds; UI response times under 100ms.
-* **Reliability & Null Safety:** Comprehensive null checking on user sessions to prevent crashes.
-* **Scalability:** Serverless architecture capable of handling concurrent reads/writes via Firebase Firestore.
+
+- **Performance:** Target a cold app launch time of under 2 seconds and UI response times under 100 milliseconds.
+
+- **Reliability & Null Safety:** Implement null checking on user sessions to reduce application crashes and improve reliability.
+
+- **Scalability:** Use Firebase Firestore serverless architecture to support concurrent database reads and writes.
+
+---
+
+## 4. Conclusion
+
+The requirement analysis identifies the main problems, expected system functions, and quality requirements of the All in One application. These requirements provide a foundation for the feasibility study, system design, development, and testing phases.
