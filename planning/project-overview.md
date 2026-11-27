@@ -1,5 +1,5 @@
 
-1. Project Title
+## 1. Project Title
 All in One – Online Shopping 
 
 ## 2. Introduction
